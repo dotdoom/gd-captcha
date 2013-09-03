@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <time.h>
 #include <math.h>
 #include <string.h>
 #include <gd.h>
@@ -9,7 +8,7 @@
 /*
  * Generate a random number in range [0..range].
  */
-int range_random(int range) {
+static int _range_random(int range) {
 	if (range) {
 		return rand() / (RAND_MAX / range);
 	} else {
@@ -20,7 +19,7 @@ int range_random(int range) {
 /*
  * Generate a random number in range [-1..1].
  */
-double norm_random() {
+static double _norm_random() {
 	return rand() / (double)RAND_MAX * 2 - 1;
 }
 
@@ -30,9 +29,8 @@ void render(const char *captcha_text, FILE *handle) {
 	int brect[8]; // Bounds rect (set by gdImageStringFT).
 
 	char current_char[2] = { 0 };
-	char *font_error = 0;
+	char *font_error = NULL;
 
-	srand(time(NULL));
 	char_step = (CAPTCHA_WIDTH - (CAPTCHA_MARGIN_X * 2)) / strlen(captcha_text);
 	font_size = CAPTCHA_HEIGHT - 2 * CAPTCHA_MARGIN_Y;
 
@@ -46,7 +44,7 @@ void render(const char *captcha_text, FILE *handle) {
 	for (i = 0; *captcha_text; ++captcha_text, ++i) {
 		current_char[0] = *captcha_text;
 		font_error = gdImageStringFT(captcha_image, brect, font_color, CAPTCHA_FONT_LOCATION,
-				font_size, CAPTCHA_CHAR_ANGLE * norm_random(),
+				font_size, CAPTCHA_CHAR_ANGLE * _norm_random(),
 				CAPTCHA_MARGIN_X + (i * char_step), CAPTCHA_HEIGHT - CAPTCHA_MARGIN_Y,
 				current_char);
 		if (font_error) {
@@ -57,10 +55,10 @@ void render(const char *captcha_text, FILE *handle) {
 	gdImageSetThickness(captcha_image, CAPTCHA_STRIKE_WIDTH);
 	for (i = 0; i < CAPTCHA_STRIKE_LINES; ++i) {
 		gdImageLine(captcha_image,
-				range_random(CAPTCHA_MARGIN_X),
-				range_random(CAPTCHA_HEIGHT),
-				range_random(CAPTCHA_MARGIN_X) + CAPTCHA_WIDTH - CAPTCHA_MARGIN_X,
-				range_random(CAPTCHA_HEIGHT),
+				_range_random(CAPTCHA_MARGIN_X),
+				_range_random(CAPTCHA_HEIGHT),
+				_range_random(CAPTCHA_MARGIN_X) + CAPTCHA_WIDTH - CAPTCHA_MARGIN_X,
+				_range_random(CAPTCHA_HEIGHT),
 				i % 2 ? background_color : font_color);
 	}
 	gdImagePng(captcha_image, handle);

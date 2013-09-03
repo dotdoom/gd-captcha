@@ -23,10 +23,6 @@
 // Maximum angle to turn a single char (randomly).
 #define CAPTCHA_CHAR_ANGLE (M_PI/8)
 
-int range_random(int range);
-
-double norm_random();
-
 void render(const char *captcha_text, FILE *handle);
 
 #endif
