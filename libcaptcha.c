@@ -23,7 +23,7 @@ static double _norm_random() {
 	return rand() / (double)RAND_MAX * 2 - 1;
 }
 
-void render(const char *captcha_text, FILE *handle) {
+void render(const char *captcha_text, FILE *handle, char *fontname) {
 	gdImagePtr captcha_image = NULL;
 	int background_color, font_color, font_size, char_step, i;
 	int brect[8]; // Bounds rect (set by gdImageStringFT).
@@ -43,7 +43,7 @@ void render(const char *captcha_text, FILE *handle) {
 	font_color = gdImageColorAllocate(captcha_image, 0, 0, 0);
 	for (i = 0; *captcha_text; ++captcha_text, ++i) {
 		current_char[0] = *captcha_text;
-		font_error = gdImageStringFT(captcha_image, brect, font_color, CAPTCHA_FONT_LOCATION,
+		font_error = gdImageStringFT(captcha_image, brect, font_color, fontname,
 				font_size, CAPTCHA_CHAR_ANGLE * _norm_random(),
 				CAPTCHA_MARGIN_X + (i * char_step), CAPTCHA_HEIGHT - CAPTCHA_MARGIN_Y,
 				current_char);
